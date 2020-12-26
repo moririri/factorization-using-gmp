@@ -14,6 +14,14 @@ GMPとは多倍長演算をC/C++で行うことを想定したライブラリで
 
 https://ja.wikipedia.org/wiki/GNU_Multi-Precision_Library
 
+GMPはシングルスレッドで最適化されており、最速を目指しているそうです。
+
+GPUとか使って自前で使用したら、GMPの方が遅いこともあると思いますが、そうでない場合は圧倒的にGMPは速いです。
+
+よって、一般的には多倍長演算を自前で実装するよりも、GMPを使用して実装した方が効率良く実装できます。
+
+RSAの実装に使用する数論関数、その他、多倍長演算のビット演算子もサポートしています。
+
 
 # factorizationパッケージ関連
 
@@ -21,7 +29,7 @@ https://ja.wikipedia.org/wiki/GNU_Multi-Precision_Library
 
 Linuxで実行できるfactorコマンド：
 
-以下のコマンドで実行できる。
+以下のコマンドで実行できます。
 
 ```
 factor [input]
@@ -53,9 +61,18 @@ Algorithm:
     2^{127}-3 takes about 50 ms with the two-word algorithm but would
     take about 750 ms with the GMP code.
 ```
-一応、これも上記アルゴリズムを見た感じだとGMPベースな感じを受ける。
-実際ヘッダファイルにもGMPのヘッダ（gmp.h）がインクルードされているし、GMPの関数もコールされているので、間違いないと思われる。
+一応、これも上記アルゴリズムを見た感じだとGMPベースな感じを受けます。
+実際ヘッダファイルにもGMPのヘッダ（gmp.h）がインクルードされているし、GMPの関数もコールされているので、間違いないと思われます。
 ただ、コメントを見る感じ、GMPなしでも動作するように改良が加えられているようです。（詳しくはわからない）
+
+## ECMパッケージ
+
+楕円曲線法のパッケージ
+
+https://stdkmd.net/nrr/ecm_ja.htm
+
+GMPベースの実装
+
 
 ## Msieveパッケージ
 
@@ -63,7 +80,7 @@ Algorithm:
 
 http://inaz2.hatenablog.com/entry/2016/01/09/032521
 
-GMPを使用して実装されている。
+GMPを使用して実装されています。
 
 ## GGNFSパッケージ
 
@@ -71,12 +88,46 @@ GMPを使用して実装されている。
 
 https://stdkmd.net/nrr/ggnfs_ja.htm
 
-Msieveの方が個人的には使いやすいと思っている。
+Msieveの方が個人的には使いやすいと思っています。
+
+こちらもGMPを使用しているようです。
 
 # ウェブサービス関連
 
-素因数分解してくれるウェブサービス
+素因数分解してくれるウェブサービス、ただし試し割りをしている感覚に近い。
 
 http://factordb.com/
 
+# プログラム
 
+ポラードのロー法とフェルマの平方差分法は簡単に実装でき、かつロー法は優秀。
+
+フェルマの平方差分法は2次ふるい法などのアプローチにも応用されているので、勉強するにはここから。
+
+## 事前準備
+
+GMPのパッケージとbcのインストール
+
+```
+sudo apt install -y libgmp-dev bc
+```
+
+コンパイル
+
+```
+make
+```
+
+ポラードのロー法の実行
+
+```
+echo "31*11" | bc | ./rho
+```
+
+# 参考
+
+factorizationのアルゴリズムが色々のってて楽しい
+
+https://wacchoz.hatenablog.com/entry/2019/01/20/120000
+
+http://fussy.web.fc2.com/algo/math11_factorization1.htm
